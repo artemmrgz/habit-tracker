@@ -10,6 +10,8 @@ import UIKit
 class HomeViewController: UIViewController {
 
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    let dayOverviewView = DayOverviewView()
+    
     let calendarViewModel = CalendarViewModel()
     let nameLabel = UILabel()
     
@@ -32,8 +34,14 @@ class HomeViewController: UIViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = .systemBackground
         
+        dayOverviewView.translatesAutoresizingMaskIntoConstraints = false
+        dayOverviewView.backgroundColor = .systemGray3
+        dayOverviewView.isHidden = true
+        dayOverviewView.alpha = 0
+        
         view.addSubview(collectionView)
         view.addSubview(nameLabel)
+        view.addSubview(dayOverviewView)
         
         NSLayoutConstraint.activate([
             nameLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
@@ -43,7 +51,11 @@ class HomeViewController: UIViewController {
             collectionView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 16),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8),
-            collectionView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1)
+            collectionView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1),
+            
+            dayOverviewView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            dayOverviewView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            dayOverviewView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
         ])
     }
     
@@ -82,6 +94,13 @@ class HomeViewController: UIViewController {
         
         return transition
     }
+    
+    private func getCellFrame(from collectionView: UICollectionView, at indexPath: IndexPath) -> CGRect? {
+        let attribures = collectionView.layoutAttributesForItem(at: indexPath)
+        guard let attribures = attribures else { return nil }
+        let cellFrame = collectionView.convert(attribures.frame, to: collectionView.superview)
+        return cellFrame
+    }
 }
 
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -100,6 +119,34 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CalendarCell.reuseID, for: indexPath) as! CalendarCell
         cell.configureWith(dayOfMonth: day.dayOfMonth, dayOfWeek: day.dayOfWeek, isToday: calendarViewModel.dateToday == day.dayAsDate)
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard !calendarViewModel.sevenDays.isEmpty else { return }
+        guard let cellFrame = getCellFrame(from: collectionView, at: indexPath) else { return }
+        
+        let day = calendarViewModel.sevenDays[indexPath.row]
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yyyy"
+        let date = formatter.string(from: day.dayAsDate)
+        
+        dayOverviewView.configureWith(date: date)
+    
+
+        let initialFrame = dayOverviewView.frame
+        dayOverviewView.frame = cellFrame
+        dayOverviewView.stackView.alpha = 0
+        
+        UIView.animate(withDuration: 0.8, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 5) {
+            self.dayOverviewView.isHidden = false
+            self.dayOverviewView.alpha = 1
+            self.dayOverviewView.frame = initialFrame
+        }
+        
+        UIView.animate(withDuration: 0.4, delay: 0.4, usingSpringWithDamping: 0.8, initialSpringVelocity: 5) {
+            self.dayOverviewView.stackView.alpha = 1
+        }
     }
 }
 
