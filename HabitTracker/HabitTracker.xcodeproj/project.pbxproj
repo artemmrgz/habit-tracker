@@ -158,11 +158,10 @@
 		D91E971E2A1FF09000D6C481 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
+				D91E97262A2009B700D6C481 /* Managers */,
 				D91E971F2A1FF0DD00D6C481 /* Models */,
 				D91E97182A1F8AC700D6C481 /* NetworkService.swift */,
 				D91E971A2A1F997500D6C481 /* Endpoint.swift */,
-				D91E97162A1F7A3100D6C481 /* TokenManager.swift */,
-				D91E97142A1F674500D6C481 /* StorageManager.swift */,
 				D91E97202A1FFC3900D6C481 /* HTTPURLResponse+Utils.swift */,
 			);
 			path = Networking;
@@ -177,6 +176,15 @@
 				D91E97242A2001E900D6C481 /* Result.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		D91E97262A2009B700D6C481 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				D91E97142A1F674500D6C481 /* StorageManager.swift */,
+				D91E97162A1F7A3100D6C481 /* TokenManager.swift */,
+			);
+			path = Managers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

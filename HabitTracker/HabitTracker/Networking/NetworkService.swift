@@ -9,39 +9,9 @@ import Foundation
 
 class NetworkService {
     
-    private static var instance: NetworkService!
+    static let shared = NetworkService()
     
-    private let accessTokenLifeSeconds = 5 * 60
-    
-    private let storageManager: StorageManageable!
-    
-    private var accessToken: TokenInfo
-    private var refreshToken: TokenInfo
-    
-    private init(storageManager: StorageManageable) {
-        self.storageManager = storageManager
-        
-        accessToken = storageManager.getAccessToken()
-        refreshToken = storageManager.getRefreshToken()
-    }
-    
-    static func shared(storageManager: StorageManageable = UserDefaultsManager()) -> NetworkService {
-        if instance == nil {
-            instance = NetworkService(storageManager: storageManager)
-        }
-        return instance
-    }
-    
-    private func updateTokens(_ tokens: TokensInfo) {
-        storageManager.saveAuthTokens(tokens: tokens)
-        accessToken = TokenInfo(token: tokens.accessToken, expiresAt: tokens.accessTokenExpire)
-        refreshToken = TokenInfo(token: tokens.refreshToken, expiresAt: tokens.refreshTokenExpire)
-    }
-    
-    func dropTokens() {
-        accessToken = TokenInfo(token: "", expiresAt: 0)
-        refreshToken = TokenInfo(token: "", expiresAt: 0)
-    }
+    private let tokenManager = TokenManager()
     
     private func buildRequest(url: URL,
                               data: Data = Data(),
@@ -55,9 +25,9 @@ class NetworkService {
         request.httpBody = data
         
         if refreshTokens {
-            request.addValue("Bearer \(refreshToken.token)", forHTTPHeaderField: "Authorization")
-        } else if !accessToken.token.isEmpty && !ignoreJwtAuth {
-            request.addValue("Bearer \(accessToken.token)", forHTTPHeaderField: "Authorization")
+            request.addValue("Bearer \(tokenManager.refreshToken.token)", forHTTPHeaderField: "Authorization")
+        } else if !tokenManager.accessToken.token.isEmpty && !ignoreJwtAuth {
+            request.addValue("Bearer \(tokenManager.accessToken.token)", forHTTPHeaderField: "Authorization")
         }
         return request
     }
@@ -73,12 +43,12 @@ class NetworkService {
     
     private func renewAuthHeader(request: URLRequest) -> URLRequest {
         var newRequest = request
-        newRequest.setValue("Bearer \(accessToken.token)", forHTTPHeaderField: "Authorization")
+        newRequest.setValue("Bearer \(tokenManager.accessToken.token)", forHTTPHeaderField: "Authorization")
         return newRequest
     }
     
     func request<T: Decodable>(request: URLRequest, completionHandler: @escaping (Result<T>) -> Void) {
-        if needReAuth && !refreshToken.token.isEmpty {
+        if needReAuth && !tokenManager.refreshToken.token.isEmpty {
             authAndDoRequest(request: request, completionHandler: completionHandler)
         } else {
             doRequest(request: request, completionHandler: completionHandler)
@@ -112,7 +82,7 @@ class NetworkService {
             if httpResponse.isSuccessful() {
                 do {
                     let response = try JSONDecoder().decode(TokensInfo.self, from: data)
-                    self.updateTokens(response)
+                    self.tokenManager.updateTokens(response)
                     let newRequest = self.renewAuthHeader(request: request)
                     self.doRequest(request: newRequest, completionHandler: completionHandler)
                     return
@@ -198,6 +168,4 @@ class NetworkService {
             return .serverError(ErrorResponse(code: 0, message: "some error"))
         }
     }
-    
-    
 }

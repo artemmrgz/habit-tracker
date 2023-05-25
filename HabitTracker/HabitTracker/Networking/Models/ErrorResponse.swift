@@ -12,6 +12,6 @@ struct ErrorResponse: Codable {
     let message: String
 
     func isAuth() -> Bool {
-        return Errors.isAuthError(err: message)
+        return Errors.isAuthError(message)
     }
 }
