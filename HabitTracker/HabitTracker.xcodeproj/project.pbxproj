@@ -19,6 +19,15 @@
 		D91E97082A1BE2CE00D6C481 /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E97072A1BE2CE00D6C481 /* CalendarViewModel.swift */; };
 		D91E970A2A1BF4DD00D6C481 /* CalendarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E97092A1BF4DD00D6C481 /* CalendarCell.swift */; };
 		D91E970C2A1D0E6500D6C481 /* DayOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E970B2A1D0E6500D6C481 /* DayOverviewView.swift */; };
+		D91E97112A1F657D00D6C481 /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E97102A1F657D00D6C481 /* Token.swift */; };
+		D91E97132A1F65AA00D6C481 /* ErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E97122A1F65AA00D6C481 /* ErrorResponse.swift */; };
+		D91E97152A1F674500D6C481 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E97142A1F674500D6C481 /* StorageManager.swift */; };
+		D91E97172A1F7A3100D6C481 /* TokenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E97162A1F7A3100D6C481 /* TokenManager.swift */; };
+		D91E97192A1F8AC700D6C481 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E97182A1F8AC700D6C481 /* NetworkService.swift */; };
+		D91E971B2A1F997500D6C481 /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E971A2A1F997500D6C481 /* Endpoint.swift */; };
+		D91E97212A1FFC3900D6C481 /* HTTPURLResponse+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E97202A1FFC3900D6C481 /* HTTPURLResponse+Utils.swift */; };
+		D91E97232A2000A500D6C481 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E97222A2000A500D6C481 /* Errors.swift */; };
+		D91E97252A2001E900D6C481 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E97242A2001E900D6C481 /* Result.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +64,15 @@
 		D91E97072A1BE2CE00D6C481 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
 		D91E97092A1BF4DD00D6C481 /* CalendarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarCell.swift; sourceTree = "<group>"; };
 		D91E970B2A1D0E6500D6C481 /* DayOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayOverviewView.swift; sourceTree = "<group>"; };
+		D91E97102A1F657D00D6C481 /* Token.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
+		D91E97122A1F65AA00D6C481 /* ErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorResponse.swift; sourceTree = "<group>"; };
+		D91E97142A1F674500D6C481 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		D91E97162A1F7A3100D6C481 /* TokenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenManager.swift; sourceTree = "<group>"; };
+		D91E97182A1F8AC700D6C481 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
+		D91E971A2A1F997500D6C481 /* Endpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
+		D91E97202A1FFC3900D6C481 /* HTTPURLResponse+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPURLResponse+Utils.swift"; sourceTree = "<group>"; };
+		D91E97222A2000A500D6C481 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		D91E97242A2001E900D6C481 /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +123,7 @@
 		D91E96D42A1BD06700D6C481 /* HabitTracker */ = {
 			isa = PBXGroup;
 			children = (
+				D91E971E2A1FF09000D6C481 /* Networking */,
 				D91E96D52A1BD06700D6C481 /* AppDelegate.swift */,
 				D91E96D72A1BD06700D6C481 /* SceneDelegate.swift */,
 				D91E96D92A1BD06700D6C481 /* ViewController.swift */,
@@ -134,6 +153,30 @@
 				D91E96F82A1BD06800D6C481 /* HabitTrackerUITestsLaunchTests.swift */,
 			);
 			path = HabitTrackerUITests;
+			sourceTree = "<group>";
+		};
+		D91E971E2A1FF09000D6C481 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				D91E971F2A1FF0DD00D6C481 /* Models */,
+				D91E97182A1F8AC700D6C481 /* NetworkService.swift */,
+				D91E971A2A1F997500D6C481 /* Endpoint.swift */,
+				D91E97162A1F7A3100D6C481 /* TokenManager.swift */,
+				D91E97142A1F674500D6C481 /* StorageManager.swift */,
+				D91E97202A1FFC3900D6C481 /* HTTPURLResponse+Utils.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		D91E971F2A1FF0DD00D6C481 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D91E97102A1F657D00D6C481 /* Token.swift */,
+				D91E97122A1F65AA00D6C481 /* ErrorResponse.swift */,
+				D91E97222A2000A500D6C481 /* Errors.swift */,
+				D91E97242A2001E900D6C481 /* Result.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -266,13 +309,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D91E97172A1F7A3100D6C481 /* TokenManager.swift in Sources */,
+				D91E97232A2000A500D6C481 /* Errors.swift in Sources */,
 				D91E96DA2A1BD06700D6C481 /* ViewController.swift in Sources */,
+				D91E97212A1FFC3900D6C481 /* HTTPURLResponse+Utils.swift in Sources */,
 				D91E970A2A1BF4DD00D6C481 /* CalendarCell.swift in Sources */,
+				D91E971B2A1F997500D6C481 /* Endpoint.swift in Sources */,
+				D91E97252A2001E900D6C481 /* Result.swift in Sources */,
 				D91E96D62A1BD06700D6C481 /* AppDelegate.swift in Sources */,
 				D91E970C2A1D0E6500D6C481 /* DayOverviewView.swift in Sources */,
 				D91E96D82A1BD06700D6C481 /* SceneDelegate.swift in Sources */,
 				D91E97062A1BDD7C00D6C481 /* HomeViewController.swift in Sources */,
+				D91E97132A1F65AA00D6C481 /* ErrorResponse.swift in Sources */,
+				D91E97152A1F674500D6C481 /* StorageManager.swift in Sources */,
 				D91E97082A1BE2CE00D6C481 /* CalendarViewModel.swift in Sources */,
+				D91E97192A1F8AC700D6C481 /* NetworkService.swift in Sources */,
+				D91E97112A1F657D00D6C481 /* Token.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
