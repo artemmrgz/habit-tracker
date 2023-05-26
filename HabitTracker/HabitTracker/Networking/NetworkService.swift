@@ -33,7 +33,7 @@ class NetworkService {
     }
     
     private func buildRefreshTokenRequest() -> URLRequest {
-        return buildRequest(url: Endpoint.refreshToken.absoluteURL, refreshTokens: true)
+        return buildRequest(url: Endpoint.auth(.refreshToken).absoluteURL, refreshTokens: true)
     }
     
     private var needReAuth: Bool {
@@ -167,5 +167,19 @@ class NetworkService {
         } catch {
             return .serverError(ErrorResponse(code: 0, message: "some error"))
         }
+    }
+    
+    func sendEmail(emailBody: EmailBody, completionHandler: @escaping (Result<SuccessResponse>) -> Void) {
+        let url = Endpoint.auth(.sendEmail).absoluteURL
+        let body = try! JSONEncoder().encode(emailBody)  //TODO: handle serialization error
+        let request = buildRequest(url: url, data: body, method: Method.POST.rawValue, ignoreJwtAuth: true)
+        doRequest(request: request, completionHandler: completionHandler)
+    }
+    
+    func sendVerificationCode(codeBody: VerificationCodeBody, completionHandler: @escaping (Result<TokensInfo>) -> Void) {
+        let url = Endpoint.auth(.sendVerificationCode).absoluteURL
+        let body = try! JSONEncoder().encode(codeBody) //TODO: handle serialization error
+        let request = buildRequest(url: url, data: body, method: Method.POST.rawValue, ignoreJwtAuth: true)
+        doRequest(request: request, completionHandler: completionHandler)
     }
 }

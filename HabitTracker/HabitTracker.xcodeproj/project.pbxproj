@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D91D85682A20C78E00E76AF0 /* AuthenticationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91D85672A20C78E00E76AF0 /* AuthenticationViewController.swift */; };
+		D91D856A2A20FCC700E76AF0 /* ObtainTokensBodies.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91D85692A20FCC700E76AF0 /* ObtainTokensBodies.swift */; };
+		D91D856C2A21303B00E76AF0 /* UITextField+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91D856B2A21303B00E76AF0 /* UITextField+Utils.swift */; };
 		D91E96D62A1BD06700D6C481 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E96D52A1BD06700D6C481 /* AppDelegate.swift */; };
 		D91E96D82A1BD06700D6C481 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E96D72A1BD06700D6C481 /* SceneDelegate.swift */; };
 		D91E96DA2A1BD06700D6C481 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E96D92A1BD06700D6C481 /* ViewController.swift */; };
@@ -48,6 +51,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D91D85672A20C78E00E76AF0 /* AuthenticationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationViewController.swift; sourceTree = "<group>"; };
+		D91D85692A20FCC700E76AF0 /* ObtainTokensBodies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObtainTokensBodies.swift; sourceTree = "<group>"; };
+		D91D856B2A21303B00E76AF0 /* UITextField+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Utils.swift"; sourceTree = "<group>"; };
 		D91E96D22A1BD06700D6C481 /* HabitTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HabitTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D91E96D52A1BD06700D6C481 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D91E96D72A1BD06700D6C481 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -134,6 +140,8 @@
 				D91E97072A1BE2CE00D6C481 /* CalendarViewModel.swift */,
 				D91E97092A1BF4DD00D6C481 /* CalendarCell.swift */,
 				D91E970B2A1D0E6500D6C481 /* DayOverviewView.swift */,
+				D91D85672A20C78E00E76AF0 /* AuthenticationViewController.swift */,
+				D91D856B2A21303B00E76AF0 /* UITextField+Utils.swift */,
 			);
 			path = HabitTracker;
 			sourceTree = "<group>";
@@ -174,6 +182,7 @@
 				D91E97122A1F65AA00D6C481 /* ErrorResponse.swift */,
 				D91E97222A2000A500D6C481 /* Errors.swift */,
 				D91E97242A2001E900D6C481 /* Result.swift */,
+				D91D85692A20FCC700E76AF0 /* ObtainTokensBodies.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -317,14 +326,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D91D856C2A21303B00E76AF0 /* UITextField+Utils.swift in Sources */,
 				D91E97172A1F7A3100D6C481 /* TokenManager.swift in Sources */,
 				D91E97232A2000A500D6C481 /* Errors.swift in Sources */,
+				D91D856A2A20FCC700E76AF0 /* ObtainTokensBodies.swift in Sources */,
 				D91E96DA2A1BD06700D6C481 /* ViewController.swift in Sources */,
 				D91E97212A1FFC3900D6C481 /* HTTPURLResponse+Utils.swift in Sources */,
 				D91E970A2A1BF4DD00D6C481 /* CalendarCell.swift in Sources */,
 				D91E971B2A1F997500D6C481 /* Endpoint.swift in Sources */,
 				D91E97252A2001E900D6C481 /* Result.swift in Sources */,
 				D91E96D62A1BD06700D6C481 /* AppDelegate.swift in Sources */,
+				D91D85682A20C78E00E76AF0 /* AuthenticationViewController.swift in Sources */,
 				D91E970C2A1D0E6500D6C481 /* DayOverviewView.swift in Sources */,
 				D91E96D82A1BD06700D6C481 /* SceneDelegate.swift in Sources */,
 				D91E97062A1BDD7C00D6C481 /* HomeViewController.swift in Sources */,

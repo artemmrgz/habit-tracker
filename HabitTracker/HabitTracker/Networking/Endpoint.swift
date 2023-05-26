@@ -9,18 +9,40 @@ import Foundation
 
 enum Endpoint {
     
-    static let baseURL = "https://test/"
+    static let baseURL = "http://127.0.0.1:8080/"
     
-    case refreshToken
+    case auth(Auth)
+    
+    enum Auth {
+        case sendEmail
+        case sendVerificationCode
+        case refreshToken
+    }
+    
     
     func path() -> String {
         switch self {
-        case .refreshToken:
-            return "api/refresh/"
+        case.auth(let auth):
+            var path = "auth/"
+            
+            switch auth {
+            case .sendEmail:
+                path += "email/"
+            case .sendVerificationCode:
+                path += "token/"
+            case .refreshToken:
+                path += "token/refresh/"
+            }
+            return path
         }
     }
     
     var absoluteURL: URL {
         return URL(string: Endpoint.baseURL + self.path())!
     }
+}
+
+enum Method: String {
+    case GET
+    case POST
 }

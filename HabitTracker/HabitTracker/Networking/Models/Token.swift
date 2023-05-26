@@ -7,11 +7,17 @@
 
 import Foundation
 
-struct TokensInfo: Codable {
+// TODO: choose tokens model
+struct TokensInfo2: Codable {
     let accessToken: String
     let accessTokenExpire: Int
     let refreshToken: String
     let refreshTokenExpire: Int
+}
+
+struct TokensInfo: Codable {
+    let access: String
+    let refresh: String
 }
 
 struct TokenInfo {
