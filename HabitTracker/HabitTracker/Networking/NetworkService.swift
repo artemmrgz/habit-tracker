@@ -37,8 +37,11 @@ class NetworkService {
     }
     
     private var needReAuth: Bool {
-        //TODO: get server time and compare with access token expire
-        return true
+        // request new access token if time delta is empty
+        guard let timeDelta = tokenManager.timeDelta else { return true }
+        let now = Date().timeIntervalSinceReferenceDate
+        
+        return (tokenManager.accessToken.expiresAt - now + timeDelta) > 0
     }
     
     private func renewAuthHeader(request: URLRequest) -> URLRequest {

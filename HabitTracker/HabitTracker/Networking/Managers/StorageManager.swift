@@ -8,10 +8,11 @@
 import Foundation
 
 protocol StorageManageable {
-    func saveAuthTokens(tokens: TokensInfo)
-    func getAccessToken() -> TokenInfo
-    func getRefreshToken() -> TokenInfo
     func dropTokens()
+    func saveTimeDelta(_ delta: Double)
+    func getTimeDelta() -> Double?
+    func saveToken(_ token: TokenInfo, isRefresh: Bool)
+    func getToken(isRefresh: Bool) -> TokenInfo
 }
 
 
@@ -24,27 +25,39 @@ class UserDefaultsManager: StorageManageable {
     private static let accessTokenExpireKey = "accessTokenExpire"
     private static let refreshTokenKey = "refreshToken"
     private static let refreshTokenExpireKey = "refreshTokenExpire"
+    private static let timeDeltaKey = "timeDelta"
     
-    
-    func saveAuthTokens(tokens: TokensInfo) {
-        defaults.set(tokens.accessToken, forKey: UserDefaultsManager.accessTokenKey)
-        defaults.set(tokens.accessTokenExpire, forKey: UserDefaultsManager.accessTokenExpireKey)
-        defaults.set(tokens.refreshToken, forKey: UserDefaultsManager.refreshTokenKey)
-        defaults.set(tokens.accessToken, forKey: UserDefaultsManager.refreshTokenExpireKey)
+    func saveToken(_ token: TokenInfo, isRefresh: Bool) {
+        if isRefresh {
+            defaults.set(token.token, forKey: UserDefaultsManager.refreshTokenKey)
+            defaults.set(token.expiresAt, forKey: UserDefaultsManager.refreshTokenExpireKey)
+        } else {
+            defaults.set(token.token, forKey: UserDefaultsManager.accessTokenKey)
+            defaults.set(token.expiresAt, forKey: UserDefaultsManager.accessTokenExpireKey)
+        }
     }
     
-    func getAccessToken() -> TokenInfo {
-        let accessToken = defaults.string(forKey: UserDefaultsManager.accessTokenKey) ?? ""
-        let expiresAt = defaults.integer(forKey: UserDefaultsManager.accessTokenExpireKey)
+    func getToken(isRefresh: Bool) -> TokenInfo {
+        let token: String
+        let expiresAt: Double
         
-        return TokenInfo(token: accessToken, expiresAt: expiresAt)
+        if isRefresh {
+            token = defaults.string(forKey: UserDefaultsManager.refreshTokenKey) ?? ""
+            expiresAt = defaults.double(forKey: UserDefaultsManager.refreshTokenExpireKey)
+        } else {
+            token = defaults.string(forKey: UserDefaultsManager.accessTokenKey) ?? ""
+            expiresAt = defaults.double(forKey: UserDefaultsManager.accessTokenExpireKey)
+        }
+        
+        return TokenInfo(token: token, expiresAt: expiresAt)
     }
     
-    func getRefreshToken() -> TokenInfo {
-        let accessToken = defaults.string(forKey: UserDefaultsManager.refreshTokenKey) ?? ""
-        let expiresAt = defaults.integer(forKey: UserDefaultsManager.refreshTokenExpireKey)
-        
-        return TokenInfo(token: accessToken, expiresAt: expiresAt)
+    func saveTimeDelta(_ delta: Double) {
+        defaults.set(delta, forKey: UserDefaultsManager.timeDeltaKey)
+    }
+    
+    func getTimeDelta() -> Double? {
+        return defaults.object(forKey: UserDefaultsManager.timeDeltaKey) as? Double
     }
     
     func dropTokens() {
