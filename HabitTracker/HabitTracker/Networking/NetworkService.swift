@@ -70,14 +70,14 @@ class NetworkService {
             
             guard let httpResponse = response as? HTTPURLResponse else {
                 DispatchQueue.main.async {
-                    completionHandler(.authError(ErrorResponse(code: 0, message: "Some error")))
+                    completionHandler(.authError(ErrorResponse(code: 0, message: Errors.errorConvertingToHttpResponse)))
                 }
                 return
             }
             
             guard let data = data else {
                 DispatchQueue.main.async {
-                    completionHandler(.authError(ErrorResponse(code: httpResponse.statusCode, message: "some error")))
+                    completionHandler(.authError(ErrorResponse(code: httpResponse.statusCode, message: Errors.errorNilBody)))
                 }
                 return
             }
@@ -91,7 +91,7 @@ class NetworkService {
                     return
                 } catch {
                     DispatchQueue.main.async {
-                        completionHandler(.authError(ErrorResponse(code: 0, message: "some error")))
+                        completionHandler(.authError(ErrorResponse(code: 0, message: Errors.errorParsingResponse)))
                     }
                     return
                 }
@@ -105,7 +105,7 @@ class NetworkService {
                     return
                 } catch {
                     DispatchQueue.main.async {
-                        completionHandler(.authError(ErrorResponse(code: 0, message: "Some error")))
+                        completionHandler(.authError(ErrorResponse(code: 0, message: Errors.errorParsingErrorResponse)))
                     }
                     return
                 }
@@ -117,7 +117,6 @@ class NetworkService {
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 DispatchQueue.main.async {
-                    //TODO: errors classification
                     completionHandler(.networkError(error.localizedDescription))
                 }
                 return
@@ -125,14 +124,14 @@ class NetworkService {
             
             guard let httpResponse = response as? HTTPURLResponse else {
                 DispatchQueue.main.async {
-                    completionHandler(.networkError("some description"))
+                    completionHandler(.networkError(Errors.errorConvertingToHttpResponse))
                 }
                 return
             }
             
             guard let data = data else {
                 DispatchQueue.main.async {
-                    completionHandler(.serverError(ErrorResponse(code: httpResponse.statusCode, message: "some message")))
+                    completionHandler(.serverError(ErrorResponse(code: httpResponse.statusCode, message: Errors.errorNilBody)))
                 }
                 return
             }
@@ -168,7 +167,7 @@ class NetworkService {
                 return .serverError(errorResponse)
             }
         } catch {
-            return .serverError(ErrorResponse(code: 0, message: "some error"))
+            return .serverError(ErrorResponse(code: 0, message: Errors.errorParsingErrorResponse))
         }
     }
     
