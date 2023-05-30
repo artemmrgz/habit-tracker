@@ -20,8 +20,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: windowScene)
         
-        let homeVC = HomeViewController()
-        let authVC = Authentication()
+//        let homeVC = HomeViewController()
+        let authVC = AuthenticationViewController()
         window?.rootViewController = authVC
         window?.makeKeyAndVisible()
     }

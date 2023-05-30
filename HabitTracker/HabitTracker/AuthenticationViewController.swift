@@ -14,14 +14,17 @@ class AuthenticationViewController: UIViewController {
     let sendButton = UIButton()
     
     let stackView = UIStackView()
+    let homeVC = HomeViewController()
     
     let networkService = NetworkService()
+    let authVM = AuthViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         style()
         layout()
+        setupBinders()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -79,29 +82,36 @@ class AuthenticationViewController: UIViewController {
         ])
     }
     
-    @objc func btnTapped(_ sender: UIButton) {
-        guard let text = emailField.text else { return }
-        let emailText = text.lowercased()
-        
-        if codeField.isHidden {
-            if !emailText.isEmpty {
-                
-                emailField.isUserInteractionEnabled = false
-                emailField.backgroundColor = .systemGray5
-                
+    private func setupBinders() {
+        authVM.emailSent.bind { [weak self] success in
+            if !success {
+                // TODO: show error
+            } else {
                 UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 4) {
-                    self.emailField.backgroundColor = .systemGray5
-                    self.codeField.isHidden = false
+                    self?.emailField.isUserInteractionEnabled = false
+                    self?.emailField.backgroundColor = .systemGray5
+                    self?.codeField.isHidden = false
                 }
             }
+        }
+
+        authVM.tokensReceived.bind { success in
+            if !success {
+                // TODO: show error
+            } else {
+                self.present(self.homeVC, animated: true)
+            }
+        }
+    }
+    
+    @objc func btnTapped(_ sender: UIButton) {
+        if !authVM.emailSent.value {
+            guard let text = emailField.text else { return }
+            let emailText = text.lowercased()
+            authVM.sendEmail(email: emailText)
         } else {
-            if let code = codeField.text, !code.isEmpty {
-                networkService.sendVerificationCode(codeBody: VerificationCodeBody(email: emailText, code: code)) { result in
-                    if case .success(let response) = result {
-                        //TODO: save tokens and redirect to home VC
-                    }
-                }
-            }
+            guard let code = codeField.text else { return }
+            authVM.getTokens(code: code)
         }
     }
 }
