@@ -14,7 +14,6 @@ class AuthenticationViewController: UIViewController {
     let sendButton = UIButton()
     
     let stackView = UIStackView()
-    let homeVC = HomeViewController()
     
     let networkService = NetworkService()
     let authVM = AuthViewModel()
@@ -85,7 +84,8 @@ class AuthenticationViewController: UIViewController {
     private func setupBinders() {
         authVM.emailSent.bind { [weak self] success in
             if !success {
-                // TODO: show error
+                guard let error = self?.authVM.error else { return }
+                self?.present(error, animated: true)
             } else {
                 UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 4) {
                     self?.emailField.isUserInteractionEnabled = false
@@ -95,11 +95,12 @@ class AuthenticationViewController: UIViewController {
             }
         }
 
-        authVM.tokensReceived.bind { success in
+        authVM.tokensReceived.bind { [weak self] success in
             if !success {
-                // TODO: show error
+                guard let error = self?.authVM.error else { return }
+                self?.present(error, animated: true)
             } else {
-                self.present(self.homeVC, animated: true)
+                // TODO: set MainVC as root
             }
         }
     }

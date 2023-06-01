@@ -15,12 +15,12 @@ class NetworkService {
     
     private func buildRequest(url: URL,
                               data: Data = Data(),
-                              method: String = "POST",
+                              method: Method = .GET,
                               contentType: String = "application/json",
                               refreshTokens: Bool = false,
                               ignoreJwtAuth: Bool = false) -> URLRequest {
         var request = URLRequest(url: url)
-        request.httpMethod = method
+        request.httpMethod = method.rawValue
         request.addValue(contentType, forHTTPHeaderField: "Content-Type")
         request.httpBody = data
         
@@ -33,7 +33,7 @@ class NetworkService {
     }
     
     private func buildRefreshTokenRequest() -> URLRequest {
-        return buildRequest(url: Endpoint.auth(.refreshToken).absoluteURL, refreshTokens: true)
+        return buildRequest(url: Endpoint.auth(.refreshToken).absoluteURL, method: .POST, refreshTokens: true)
     }
     
     private var needReAuth: Bool {
@@ -170,14 +170,14 @@ class NetworkService {
     func sendEmail(emailBody: EmailBody, completionHandler: @escaping (Result<SuccessResponse>) -> Void) {
         let url = Endpoint.auth(.sendEmail).absoluteURL
         let body = try! JSONEncoder().encode(emailBody)  //TODO: handle serialization error
-        let request = buildRequest(url: url, data: body, method: Method.POST.rawValue, ignoreJwtAuth: true)
+        let request = buildRequest(url: url, data: body, method: .POST, ignoreJwtAuth: true)
         doRequest(request: request, completionHandler: completionHandler)
     }
     
     func sendVerificationCode(codeBody: VerificationCodeBody, completionHandler: @escaping (Result<TokensInfo>) -> Void) {
         let url = Endpoint.auth(.sendVerificationCode).absoluteURL
         let body = try! JSONEncoder().encode(codeBody) //TODO: handle serialization error
-        let request = buildRequest(url: url, data: body, method: Method.POST.rawValue, ignoreJwtAuth: true)
+        let request = buildRequest(url: url, data: body, method: .POST, ignoreJwtAuth: true)
         doRequest(request: request, completionHandler: completionHandler)
     }
 }

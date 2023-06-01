@@ -5,14 +5,14 @@
 //  Created by Artem Marhaza on 30/05/2023.
 //
 
-import Foundation
+import UIKit
 
 class AuthViewModel {
     
     let networkService = NetworkService()
     let tokenManager = TokenManager()
     
-    let error: String = ""
+    var error: UIAlertController?
     
     let emailSent: ObservableObject<Bool> = ObservableObject(false)
     let tokensReceived: ObservableObject<Bool> = ObservableObject(false)
@@ -28,11 +28,11 @@ class AuthViewModel {
                 self?.email = email
                 self?.emailSent.value = true
             case .authError(let error):
-                print(error)
-            case .networkError(let error):
-                print(error)
+                self?.error = ErrorAlert.buildForError(message: error.message)
+            case .networkError(_):
+                self?.error = ErrorAlert.networkError()
             case .serverError(let error):
-                print(error)
+                self?.error = ErrorAlert.buildForError(message: error.message)
             }
         }
     }
@@ -45,11 +45,11 @@ class AuthViewModel {
                 self?.tokensReceived.value = true
                 self?.tokenManager.updateTokens(tokens)
             case .authError(let error):
-                print(error)
-            case .networkError(let error):
-                print(error)
+                self?.error = ErrorAlert.buildForError(message: error.message)
+            case .networkError(_):
+                self?.error = ErrorAlert.networkError()
             case .serverError(let error):
-                print(error)
+                self?.error = ErrorAlert.buildForError(message: error.message)
             }
         }
     }
