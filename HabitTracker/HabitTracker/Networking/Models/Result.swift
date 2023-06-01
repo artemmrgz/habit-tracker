@@ -12,4 +12,5 @@ enum Result<T> {
     case serverError(_ err: ErrorResponse)
     case authError(_ err: ErrorResponse)
     case networkError(_ err: String)
+    case encodingError
 }

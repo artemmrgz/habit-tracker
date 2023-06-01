@@ -29,4 +29,8 @@ struct ErrorAlert {
     static func networkError() -> UIAlertController {
         return buildForError(message: "Please check your internet connection and try again")
     }
+    
+    static func encodingError() -> UIAlertController {
+        return buildForError(message: "Please try again later")
+    }
 }

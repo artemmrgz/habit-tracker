@@ -49,7 +49,6 @@ class TokenManager {
         let now = Date().timeIntervalSinceReferenceDate
         // ignore network delay (2 seconds)
         let delta = abs(now - createAt) > 2 ? now - createAt : 0
-        print("delta", delta)
         
         storageManager.saveTimeDelta(delta)
     }

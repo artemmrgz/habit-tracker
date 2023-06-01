@@ -32,6 +32,8 @@ class AuthViewModel {
                 self?.error = ErrorAlert.networkError()
             case .serverError(let error):
                 self?.error = ErrorAlert.buildForError(message: error.message)
+            case .encodingError:
+                self?.error = ErrorAlert.encodingError()
             }
         }
     }
@@ -49,6 +51,8 @@ class AuthViewModel {
                 self?.error = ErrorAlert.networkError()
             case .serverError(let error):
                 self?.error = ErrorAlert.buildForError(message: error.message)
+            case .encodingError:
+                self?.error = ErrorAlert.encodingError()
             }
         }
     }

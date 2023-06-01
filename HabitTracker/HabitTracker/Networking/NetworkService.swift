@@ -169,15 +169,23 @@ class NetworkService {
     
     func sendEmail(emailBody: EmailBody, completionHandler: @escaping (Result<SuccessResponse>) -> Void) {
         let url = Endpoint.auth(.sendEmail).absoluteURL
-        let body = try! JSONEncoder().encode(emailBody)  //TODO: handle serialization error
-        let request = buildRequest(url: url, data: body, method: .POST, ignoreJwtAuth: true)
-        doRequest(request: request, completionHandler: completionHandler)
+        do {
+            let body = try JSONEncoder().encode(emailBody)
+            let request = buildRequest(url: url, data: body, method: .POST, ignoreJwtAuth: true)
+            doRequest(request: request, completionHandler: completionHandler)
+        } catch {
+            completionHandler(.encodingError)
+        }
     }
     
     func sendVerificationCode(codeBody: VerificationCodeBody, completionHandler: @escaping (Result<TokensInfo>) -> Void) {
         let url = Endpoint.auth(.sendVerificationCode).absoluteURL
-        let body = try! JSONEncoder().encode(codeBody) //TODO: handle serialization error
-        let request = buildRequest(url: url, data: body, method: .POST, ignoreJwtAuth: true)
-        doRequest(request: request, completionHandler: completionHandler)
+        do {
+            let body = try JSONEncoder().encode(codeBody)
+            let request = buildRequest(url: url, data: body, method: .POST, ignoreJwtAuth: true)
+            doRequest(request: request, completionHandler: completionHandler)
+        } catch {
+            completionHandler(.encodingError)
+        }
     }
 }
