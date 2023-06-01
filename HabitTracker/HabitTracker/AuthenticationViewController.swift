@@ -7,6 +7,9 @@
 
 import UIKit
 
+protocol AuthenticationViewControllerDelegate: AnyObject {
+    func didAuth()
+}
 
 class AuthenticationViewController: UIViewController {
     let emailField = UITextField()
@@ -17,6 +20,8 @@ class AuthenticationViewController: UIViewController {
     
     let networkService = NetworkService()
     let authVM = AuthViewModel()
+    
+    weak var delegate: AuthenticationViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -100,7 +105,7 @@ class AuthenticationViewController: UIViewController {
                 guard let error = self?.authVM.error else { return }
                 self?.present(error, animated: true)
             } else {
-                // TODO: set MainVC as root
+                self?.delegate?.didAuth()
             }
         }
     }

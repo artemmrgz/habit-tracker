@@ -22,7 +22,6 @@ class AuthViewModel {
     func sendEmail(email: String) {
         let emailBody = EmailBody(email: email)
         networkService.sendEmail(emailBody: emailBody) { [weak self] result in
-            
             switch result {
             case .success(_):
                 self?.email = email

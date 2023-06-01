@@ -22,6 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
+        authVC.delegate = self
         
         showStartScreen()
     }
@@ -36,8 +37,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func setRootViewController(_ vc: UIViewController, animated: Bool = true) {
-        window?.rootViewController = vc
-        window?.makeKeyAndVisible()
+        guard animated, let window = self.window else {
+            self.window?.rootViewController = vc
+            self.window?.makeKeyAndVisible()
+            return
+        }
+        
+        window.rootViewController = vc
+        window.makeKeyAndVisible()
+        UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -67,7 +75,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
+}
 
-
+extension SceneDelegate: AuthenticationViewControllerDelegate {
+    func didAuth() {
+        setRootViewController(mainVC)
+    }
 }
 
