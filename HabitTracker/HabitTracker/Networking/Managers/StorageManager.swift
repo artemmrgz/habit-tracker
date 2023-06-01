@@ -12,7 +12,7 @@ protocol StorageManageable {
     func saveTimeDelta(_ delta: Double)
     func getTimeDelta() -> Double?
     func saveToken(_ token: TokenInfo, isRefresh: Bool)
-    func getToken(isRefresh: Bool) -> TokenInfo
+    func getToken(isRefresh: Bool) -> TokenInfo?
 }
 
 
@@ -37,19 +37,22 @@ class UserDefaultsManager: StorageManageable {
         }
     }
     
-    func getToken(isRefresh: Bool) -> TokenInfo {
-        let token: String
-        let expiresAt: Double
+    func getToken(isRefresh: Bool) -> TokenInfo? {
+        let token: String?
+        let expiresAt: Double?
         
         if isRefresh {
-            token = defaults.string(forKey: UserDefaultsManager.refreshTokenKey) ?? ""
-            expiresAt = defaults.double(forKey: UserDefaultsManager.refreshTokenExpireKey)
+            token = defaults.object(forKey: UserDefaultsManager.refreshTokenKey) as? String
+            expiresAt = defaults.object(forKey: UserDefaultsManager.refreshTokenExpireKey) as? Double
         } else {
-            token = defaults.string(forKey: UserDefaultsManager.accessTokenKey) ?? ""
-            expiresAt = defaults.double(forKey: UserDefaultsManager.accessTokenExpireKey)
+            token = defaults.object(forKey: UserDefaultsManager.accessTokenKey) as? String
+            expiresAt = defaults.object(forKey: UserDefaultsManager.accessTokenExpireKey) as? Double
         }
         
-        return TokenInfo(token: token, expiresAt: expiresAt)
+        if let token, let expiresAt {
+            return TokenInfo(token: token, expiresAt: expiresAt)
+        }
+        return nil
     }
     
     func saveTimeDelta(_ delta: Double) {

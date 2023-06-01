@@ -41,12 +41,14 @@ class TokenManager {
         storageManager.saveToken(token, isRefresh: isRefresh)
     }
     
-    private func saveTimeDelta(_ token: String) {
+    private func saveTimeDelta(_ token: String, fromDate date: Date = Date()) {
         let payload = decode(jwtToken: token)
         guard let createdTimestamp = payload["iat"] as? Double else { return }
         let createAt = TimeInterval(createdTimestamp)
+        print(Date(timeIntervalSince1970: createAt))
+        print(date)
         
-        let now = Date().timeIntervalSinceReferenceDate
+        let now = date.timeIntervalSince1970
         // ignore network delay (2 seconds)
         let delta = abs(now - createAt) > 2 ? now - createAt : 0
         
@@ -60,8 +62,13 @@ class TokenManager {
     }
     
     func getTokens() {
-        accessToken = storageManager.getToken(isRefresh: false)
-        refreshToken = storageManager.getToken(isRefresh: true)
+        let emptyToken = TokenInfo(token: "", expiresAt: 0.0)
+        
+        let access = storageManager.getToken(isRefresh: false)
+        let refresh = storageManager.getToken(isRefresh: true)
+        
+        accessToken = access ?? emptyToken
+        refreshToken = refresh ?? emptyToken
     }
     
     private func parseToken(_ token: String) -> TokenInfo? {
@@ -108,5 +115,16 @@ class TokenManager {
         let now = Date().timeIntervalSinceReferenceDate
         
         return (token.expiresAt - now + timeDelta) > 0
+    }
+}
+
+// MARK: Unit testing
+extension TokenManager {
+    func parseTokenForTesting(_ token: String) -> TokenInfo? {
+        parseToken(token)
+    }
+    
+    func saveTimeDeltaForTesting(_ token: String, fromDate date: Date) {
+        saveTimeDelta(token, fromDate: date)
     }
 }
