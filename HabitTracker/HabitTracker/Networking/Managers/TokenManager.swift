@@ -31,9 +31,8 @@ class TokenManager {
         
         if timeDelta == nil {
             saveTimeDelta(tokens.access)
-            
-            getTimeDelta()
         }
+        getTimeDelta()
     }
     
     func saveToken(_ token: String, isRefresh: Bool = false) {
@@ -104,4 +103,11 @@ class TokenManager {
         }
         return base64
      }
+    
+    func isValidToken(_ token: TokenInfo) -> Bool {
+        guard let timeDelta = timeDelta else { return false }
+        let now = Date().timeIntervalSinceReferenceDate
+        
+        return (token.expiresAt - now + timeDelta) > 0
+    }
 }

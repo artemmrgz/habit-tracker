@@ -10,6 +10,9 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    
+    let mainVC = MainViewController()
+    let authVC = AuthenticationViewController()
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -20,9 +23,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: windowScene)
         
-//        let homeVC = HomeViewController()
-        let authVC = AuthenticationViewController()
-        window?.rootViewController = authVC
+        showStartScreen()
+    }
+    
+    private func showStartScreen() {
+        let tokenManager = authVC.authVM.tokenManager
+        if tokenManager.isValidToken(tokenManager.refreshToken) {
+            setRootViewController(mainVC)
+        } else {
+            setRootViewController(authVC)
+        }
+    }
+    
+    private func setRootViewController(_ vc: UIViewController, animated: Bool = true) {
+        window?.rootViewController = vc
         window?.makeKeyAndVisible()
     }
 
