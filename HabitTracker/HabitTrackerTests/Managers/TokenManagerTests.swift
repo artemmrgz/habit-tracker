@@ -53,11 +53,15 @@ final class TokenManagerTests: XCTestCase {
     }
 
     override func setUp() {
+        super.setUp()
+        
         storageManagerMock = StorageManagerMock()
         sut = TokenManager(storageManager: storageManagerMock)
     }
 
-    override func tearDownWithError() throws {
+    override func tearDown() {
+        super.tearDown()
+        
         sut = nil
         storageManagerMock = nil
     }
