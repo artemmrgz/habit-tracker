@@ -7,11 +7,48 @@
 
 import Foundation
 
+protocol URLSessionDataTaskProtocol {
+    func resume()
+}
+
+protocol URLSessionProtocol {
+    func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTaskProtocol
+}
+
+extension URLSession: URLSessionProtocol {
+    func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTaskProtocol {
+        return dataTask(with: request, completionHandler: completionHandler) as URLSessionDataTaskProtocol
+    }
+}
+
+extension URLSessionDataTask: URLSessionDataTaskProtocol {}
+
+
 class NetworkService {
     
-    static let shared = NetworkService()
+    private (set) static var instance: NetworkService!
     
-    private let tokenManager = TokenManager()
+    private var tokenManager: TokenManager
+    private var session: URLSessionProtocol
+    
+    private init(tokenManager: TokenManager = TokenManager(), session: URLSessionProtocol = URLSession.shared) {
+        self.tokenManager = tokenManager
+        self.session = session
+        NetworkService.instance = self
+    }
+    
+    static func shared(tokenManager: TokenManager = TokenManager(), session: URLSessionProtocol = URLSession.shared) -> NetworkService {
+        switch instance {
+        case let i?:
+            i.tokenManager = tokenManager
+            i.session = session
+            return i
+        default:
+            instance = NetworkService(tokenManager: tokenManager, session: session)
+            return instance
+        }
+        
+    }
     
     private func buildRequest(url: URL,
                               data: Data = Data(),
@@ -56,7 +93,7 @@ class NetworkService {
     
     func authAndDoRequest<T: Decodable>(request: URLRequest, completionHandler: @escaping (Result<T>) -> Void) {
         let refreshToken = buildRefreshTokenRequest()
-        URLSession.shared.dataTask(with: refreshToken) { data, response, error in
+        session.dataTask(with: refreshToken) { data, response, error in
             if let error = error {
                 DispatchQueue.main.async {
                     completionHandler(.networkError(error.localizedDescription))
@@ -110,7 +147,7 @@ class NetworkService {
     }
     
     func doRequest<T: Decodable>(request: URLRequest, completionHandler: @escaping (Result<T>) -> Void) {
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        session.dataTask(with: request) { data, response, error in
             if let error = error {
                 DispatchQueue.main.async {
                     completionHandler(.networkError(error.localizedDescription))
@@ -187,5 +224,25 @@ class NetworkService {
         } catch {
             completionHandler(.encodingError)
         }
+    }
+}
+
+// MARK: unit testing
+extension NetworkService {
+    func buildRequestForTesting(url: URL,
+                                data: Data = Data(),
+                                method: Method,
+                                contentType: String = "application/json",
+                                refreshTokens: Bool = false,
+                                ignoreJwtAuth: Bool = false) -> URLRequest {
+        return buildRequest(url: url, data: data, method: method, refreshTokens: refreshTokens, ignoreJwtAuth: ignoreJwtAuth)
+    }
+    
+    func buildRefreshTokenRequestForTesting() -> URLRequest {
+        return buildRefreshTokenRequest()
+    }
+    
+    func renewAuthHeaderForTesting(request: URLRequest) -> URLRequest {
+        return renewAuthHeader(request: request)
     }
 }

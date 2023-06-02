@@ -9,10 +9,10 @@ import Foundation
 
 class TokenManager {
     
-    let storageManager: StorageManageable!
+    private let storageManager: StorageManageable!
     
-    var accessToken: TokenInfo!
-    var refreshToken: TokenInfo!
+    private (set) var accessToken: TokenInfo!
+    private (set) var refreshToken: TokenInfo!
 
     var timeDelta: Double?
     
@@ -45,8 +45,6 @@ class TokenManager {
         let payload = decode(jwtToken: token)
         guard let createdTimestamp = payload["iat"] as? Double else { return }
         let createAt = TimeInterval(createdTimestamp)
-        print(Date(timeIntervalSince1970: createAt))
-        print(date)
         
         let now = date.timeIntervalSince1970
         // ignore network delay (2 seconds)
@@ -61,7 +59,7 @@ class TokenManager {
         }
     }
     
-    func getTokens() {
+    private func getTokens() {
         let emptyToken = TokenInfo(token: "", expiresAt: 0.0)
         
         let access = storageManager.getToken(isRefresh: false)

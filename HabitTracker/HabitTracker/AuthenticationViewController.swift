@@ -18,7 +18,6 @@ class AuthenticationViewController: UIViewController {
     
     let stackView = UIStackView()
     
-    let networkService = NetworkService()
     let authVM = AuthViewModel()
     
     weak var delegate: AuthenticationViewControllerDelegate?

@@ -9,7 +9,7 @@ import UIKit
 
 class AuthViewModel {
     
-    let networkService = NetworkService()
+    let networkService = NetworkService.shared()
     let tokenManager = TokenManager()
     
     var error: UIAlertController?
