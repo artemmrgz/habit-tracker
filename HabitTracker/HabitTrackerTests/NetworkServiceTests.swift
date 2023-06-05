@@ -44,6 +44,7 @@ final class NetworkServiceTests: XCTestCase {
     class MockURLSession: URLSessionProtocol {
         let dataTaskMock = MockURLSessionDataTask()
         var requestUrl: URL?
+        var requestData: Data?
         
         var data: Data?
         var error: Error?
@@ -51,6 +52,8 @@ final class NetworkServiceTests: XCTestCase {
         
         func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> HabitTracker.URLSessionDataTaskProtocol {
             requestUrl = request.url
+            requestData = request.httpBody
+            
             completionHandler(self.data, self.httpResponse, self.error)
             
             return dataTaskMock
@@ -208,5 +211,133 @@ final class NetworkServiceTests: XCTestCase {
         let actualError = try XCTUnwrap(error)
         XCTAssertEqual(actualError.code, expectedError.code)
         XCTAssertEqual(actualError.message, expectedError.message)
+    }
+    
+    func testSendEmailSuccessfullySendsEmail() throws {
+        let url = URL(string: "http://127.0.0.1:8080/auth/email/")
+
+        let emailBody = EmailBody(email: "email@gmail.com")
+        let dataToSend = try! JSONEncoder().encode(emailBody)
+        
+        let httpResponse = HTTPURLResponse(url: url!, statusCode: 200, httpVersion: nil, headerFields: nil)
+        let data = try! JSONEncoder().encode("")
+        sessionMock.httpResponse = httpResponse
+        sessionMock.data = data
+        
+        let expectation = self.expectation(description: "Wait for dispathing to main queue")
+        
+        var res: Bool?
+        
+        sut.sendEmail(emailBody: emailBody) { result in
+            switch result {
+            case .success(_):
+                res = true
+                expectation.fulfill()
+            default:
+                res = false
+            }
+        }
+        
+        let actualUrl = try XCTUnwrap(sessionMock.requestUrl)
+        XCTAssertEqual(actualUrl, url)
+        
+        let actualData = try XCTUnwrap(sessionMock.requestData)
+        XCTAssertEqual(actualData, dataToSend)
+        
+        waitForExpectations(timeout: 2)
+        
+        let success = try XCTUnwrap(res)
+        XCTAssertTrue(success)
+    }
+    
+    func testSendEmailReturnsEncodingErrorWhenCannotEncodeEmailData() throws {
+        let string = "💇‍♀️" as NSString
+        let badString = string.substring(with: NSRange(location: 0, length: 1))
+        let badEmailBody = EmailBody(email: badString)
+        
+        let expectation = self.expectation(description: "Wait for dispathing to main queue")
+        
+        var encodingError: Bool?
+        
+        sut.sendEmail(emailBody: badEmailBody) { res in
+            switch res {
+            case .encodingError:
+                encodingError = true
+                expectation.fulfill()
+            default:
+                encodingError = false
+            }
+        }
+        
+        waitForExpectations(timeout: 2)
+        
+        let error = try XCTUnwrap(encodingError)
+        XCTAssertTrue(error)
+    }
+    
+    func testSendVerificationCodeSendsCodeAndReceivesTokens() throws {
+        let url = URL(string: "http://127.0.0.1:8080/auth/token/")
+        
+        let codeBody = VerificationCodeBody(email: "email@gmail.com", code: "123456")
+        let dataToSend = try! JSONEncoder().encode(codeBody)
+        
+        
+        let httpResponse = HTTPURLResponse(url: url!, statusCode: 200, httpVersion: nil, headerFields: nil)
+        sessionMock.httpResponse = httpResponse
+        
+        let expectedTokens = TokensInfo(access: "Test Access Token", refresh: "Test Resfresh Token")
+        let receivedData = try! JSONEncoder().encode(expectedTokens)
+        sessionMock.data = receivedData
+        
+        let expectation = expectation(description: "Wait for dispathing to main queue")
+        
+        var receivedTokens: TokensInfo?
+        
+        sut.sendVerificationCode(codeBody: codeBody) { res in
+            switch res {
+            case .success(let tokens):
+                receivedTokens = tokens
+                expectation.fulfill()
+            default:
+                receivedTokens = nil
+            }
+        }
+        
+        let actualURL = try XCTUnwrap(sessionMock.requestUrl)
+        XCTAssertEqual(actualURL, url)
+        
+        let actualData = try XCTUnwrap(sessionMock.requestData)
+        XCTAssertEqual(actualData, dataToSend)
+        
+        waitForExpectations(timeout: 2)
+        
+        let actualTokens = try XCTUnwrap(receivedTokens)
+        XCTAssertEqual(actualTokens.access, expectedTokens.access)
+        XCTAssertEqual(actualTokens.refresh, expectedTokens.refresh)
+    }
+    
+    func testSendVerificationCodeReturnsEncodingErrorWhenCannotEncodeVerificationCodeData() throws {
+        let string = "💇‍♀️" as NSString
+        let badString = string.substring(with: NSRange(location: 0, length: 1))
+        let badVerifCodeBody = VerificationCodeBody(email: badString, code: "123456")
+        
+        let expectation = self.expectation(description: "Wait for dispathing to main queue")
+        
+        var encodingError: Bool?
+        
+        sut.sendVerificationCode(codeBody: badVerifCodeBody) { res in
+            switch res {
+            case .encodingError:
+                encodingError = true
+                expectation.fulfill()
+            default:
+                encodingError = false
+            }
+        }
+        
+        waitForExpectations(timeout: 2)
+        
+        let error = try XCTUnwrap(encodingError)
+        XCTAssertTrue(error)
     }
 }
