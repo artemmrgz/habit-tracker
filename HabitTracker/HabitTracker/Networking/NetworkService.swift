@@ -23,8 +23,13 @@ extension URLSession: URLSessionProtocol {
 
 extension URLSessionDataTask: URLSessionDataTaskProtocol {}
 
+protocol NetworkServiceProtocol {
+    func sendEmail(emailBody: EmailBody, completionHandler: @escaping (Result<SuccessResponse>) -> Void)
+    func sendVerificationCode(codeBody: VerificationCodeBody, completionHandler: @escaping (Result<TokensInfo>) -> Void)
+}
 
-class NetworkService {
+
+class NetworkService: NetworkServiceProtocol {
     
     private (set) static var instance: NetworkService!
     

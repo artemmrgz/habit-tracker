@@ -9,15 +9,20 @@ import UIKit
 
 class AuthViewModel {
     
-    let networkService = NetworkService.shared()
-    let tokenManager = TokenManager()
+    private (set) var networkService: NetworkServiceProtocol!
+    private (set) var tokenManager: TokenManageable!
     
-    var error: UIAlertController?
+    private (set) var error: UIAlertController?
     
     let emailSent: ObservableObject<Bool> = ObservableObject(false)
     let tokensReceived: ObservableObject<Bool> = ObservableObject(false)
     
-    private var email: String!
+    private var email: String?
+    
+    init(networkService: NetworkServiceProtocol = NetworkService.shared(), tokenManager: TokenManageable = TokenManager()) {
+        self.networkService = networkService
+        self.tokenManager = tokenManager
+    }
     
     func sendEmail(email: String) {
         let emailBody = EmailBody(email: email)
@@ -39,6 +44,7 @@ class AuthViewModel {
     }
     
     func getTokens(code: String) {
+        guard let email else { return }
         let codeBody = VerificationCodeBody(email: email, code: code)
         networkService.sendVerificationCode(codeBody: codeBody) { [weak self] result in
             switch result {
@@ -55,5 +61,12 @@ class AuthViewModel {
                 self?.error = ErrorAlert.encodingError()
             }
         }
+    }
+}
+
+// MARK: Unit testing
+extension AuthViewModel {
+    var emailForTesting: String? {
+        return email
     }
 }

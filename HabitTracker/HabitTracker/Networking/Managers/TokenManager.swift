@@ -7,7 +7,15 @@
 
 import Foundation
 
-class TokenManager {
+protocol TokenManageable {
+    func updateTokens(_ tokens: TokensInfo)
+    func isValidToken(_ token: TokenInfo) -> Bool
+    var accessToken: TokenInfo! { get }
+    var refreshToken: TokenInfo! { get }
+    var timeDelta: Double? { get }
+}
+
+class TokenManager: TokenManageable {
     
     private let storageManager: StorageManageable!
     
@@ -35,7 +43,7 @@ class TokenManager {
         getTimeDelta()
     }
     
-    func saveToken(_ token: String, isRefresh: Bool = false) {
+    private func saveToken(_ token: String, isRefresh: Bool = false) {
         let token = parseToken(token)
         guard let token = token else { return }
         storageManager.saveToken(token, isRefresh: isRefresh)
@@ -124,5 +132,9 @@ extension TokenManager {
     
     func saveTimeDeltaForTesting(_ token: String, fromDate date: Date) {
         saveTimeDelta(token, fromDate: date)
+    }
+    
+    func saveTokenForTesting(_ token: String, isRefresh: Bool = false) {
+        saveToken(token, isRefresh: isRefresh)
     }
 }

@@ -28,7 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func showStartScreen() {
-        let tokenManager = authVC.authVM.tokenManager
+        guard let tokenManager = authVC.authVM.tokenManager else { return }
         if tokenManager.isValidToken(tokenManager.refreshToken) {
             setRootViewController(mainVC)
         } else {
