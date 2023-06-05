@@ -19,6 +19,7 @@
 		D91D86562A29F0D900E76AF0 /* NetworkServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91D86552A29F0D900E76AF0 /* NetworkServiceTests.swift */; };
 		D91D86582A2DECF500E76AF0 /* AuthViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91D86572A2DECF500E76AF0 /* AuthViewModelTests.swift */; };
 		D91D865A2A2E1E2D00E76AF0 /* ErrorAlertTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91D86592A2E1E2D00E76AF0 /* ErrorAlertTests.swift */; };
+		D91D865E2A2E2AB000E76AF0 /* String+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91D865D2A2E2AB000E76AF0 /* String+Utils.swift */; };
 		D91E96D62A1BD06700D6C481 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E96D52A1BD06700D6C481 /* AppDelegate.swift */; };
 		D91E96D82A1BD06700D6C481 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E96D72A1BD06700D6C481 /* SceneDelegate.swift */; };
 		D91E96DA2A1BD06700D6C481 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91E96D92A1BD06700D6C481 /* ViewController.swift */; };
@@ -72,6 +73,7 @@
 		D91D86552A29F0D900E76AF0 /* NetworkServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServiceTests.swift; sourceTree = "<group>"; };
 		D91D86572A2DECF500E76AF0 /* AuthViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModelTests.swift; sourceTree = "<group>"; };
 		D91D86592A2E1E2D00E76AF0 /* ErrorAlertTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorAlertTests.swift; sourceTree = "<group>"; };
+		D91D865D2A2E2AB000E76AF0 /* String+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
 		D91E96D22A1BD06700D6C481 /* HabitTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HabitTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D91E96D52A1BD06700D6C481 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D91E96D72A1BD06700D6C481 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 				D91D864C2A27D5C600E76AF0 /* MainViewController.swift */,
 				D91D864E2A27D79E00E76AF0 /* UIViewController+Utils.swift */,
 				D91D86502A290F1300E76AF0 /* ErrorAlert.swift */,
+				D91D865D2A2E2AB000E76AF0 /* String+Utils.swift */,
 			);
 			path = HabitTracker;
 			sourceTree = "<group>";
@@ -376,6 +379,7 @@
 				D91E96D62A1BD06700D6C481 /* AppDelegate.swift in Sources */,
 				D91D86512A290F1300E76AF0 /* ErrorAlert.swift in Sources */,
 				D91D86492A264CE600E76AF0 /* ObservableObject.swift in Sources */,
+				D91D865E2A2E2AB000E76AF0 /* String+Utils.swift in Sources */,
 				D91D85682A20C78E00E76AF0 /* AuthenticationViewController.swift in Sources */,
 				D91E970C2A1D0E6500D6C481 /* DayOverviewView.swift in Sources */,
 				D91E96D82A1BD06700D6C481 /* SceneDelegate.swift in Sources */,

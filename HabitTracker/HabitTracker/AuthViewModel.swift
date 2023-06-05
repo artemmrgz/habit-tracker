@@ -25,22 +25,24 @@ class AuthViewModel {
     }
     
     func sendEmail(email: String) {
-        let emailBody = EmailBody(email: email)
-        networkService.sendEmail(emailBody: emailBody) { [weak self] result in
-            switch result {
-            case .success(_):
-                self?.email = email
-                self?.emailSent.value = true
-            case .authError(let error):
-                self?.error = ErrorAlert.buildForError(message: error.message)
-            case .networkError(_):
-                self?.error = ErrorAlert.networkError()
-            case .serverError(let error):
-                self?.error = ErrorAlert.buildForError(message: error.message)
-            case .encodingError:
-                self?.error = ErrorAlert.encodingError()
-            }
-        }
+//        let emailBody = EmailBody(email: email)
+//        networkService.sendEmail(emailBody: emailBody) { [weak self] result in
+//            switch result {
+//            case .success(_):
+//                self?.email = email
+//                self?.emailSent.value = true
+//            case .authError(let error):
+//                self?.error = ErrorAlert.buildForError(message: error.message)
+//            case .networkError(_):
+//                self?.error = ErrorAlert.networkError()
+//            case .serverError(let error):
+//                self?.error = ErrorAlert.buildForError(message: error.message)
+//            case .encodingError:
+//                self?.error = ErrorAlert.encodingError()
+//            }
+//        }
+        self.email = email
+        self.emailSent.value = true
     }
     
     func getTokens(code: String) {
@@ -61,6 +63,28 @@ class AuthViewModel {
                 self?.error = ErrorAlert.encodingError()
             }
         }
+    }
+    
+    func validateEmail(_ text: String?) -> (Bool, String) {
+        guard let text = text, !text.isEmpty else {
+            return (false, "Please enter your email address")
+        }
+        
+        if !text.isValidEmail {
+            return (false, "Please enter a valid email address")
+        }
+        return (true, "")
+    }
+    
+    func validateCode(_ text: String?) -> (Bool, String) {
+        guard let text = text, !text.isEmpty else {
+            return (false, "Please enter your verification code")
+        }
+        
+        if Int(text) == nil, text.count != 6 {
+            return (false, "Please enter a valid verification code")
+        }
+        return (true, "")
     }
 }
 
