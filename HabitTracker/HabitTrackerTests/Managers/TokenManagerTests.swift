@@ -91,7 +91,7 @@ final class TokenManagerTests: XCTestCase {
     func testSaveTokenSuccessfulySavesAccessToken() {
         let expectedToken = TokenInfo(token: token, expiresAt: 1685394008)
         
-        sut.saveToken(token)
+        sut.saveTokenForTesting(token)
         
         compareTokens(actual: storageManagerMock.accessToken!, expected: expectedToken)
     }
@@ -99,7 +99,7 @@ final class TokenManagerTests: XCTestCase {
     func testSaveTokenSuccessfulySavesRefreshToken() {
         let expectedToken = TokenInfo(token: token, expiresAt: 1685394008)
         
-        sut.saveToken(token, isRefresh: true)
+        sut.saveTokenForTesting(token, isRefresh: true)
         
         compareTokens(actual: storageManagerMock.refreshToken!, expected: expectedToken)
     }
