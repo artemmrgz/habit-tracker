@@ -145,4 +145,46 @@ final class AuthViewModelTests: XCTestCase {
         XCTAssertEqual(actualError.title, expectedError.title)
         XCTAssertEqual(actualError.message, expectedError.message)
     }
+    
+    func testValidateEmailWhenTextIsEmpty() {
+        let (isValid, error) = sut.validateEmail("")
+        
+        XCTAssertFalse(isValid)
+        XCTAssertEqual(error, "Please enter your email address")
+    }
+    
+    func testValidateEmailWhenEmailIsNotValid() {
+        let (isValid, error) = sut.validateEmail("not_valid_email")
+        
+        XCTAssertFalse(isValid)
+        XCTAssertEqual(error, "Please enter a valid email address")
+    }
+    
+    func testValidateEmailWhenEmailIsValid() {
+        let (isValid, error) = sut.validateEmail("test@email.com")
+        
+        XCTAssertTrue(isValid)
+        XCTAssertEqual(error, "")
+    }
+    
+    func testValidateCodeWhenTextIsEmpty() {
+        let (isValid, error) = sut.validateCode("")
+        
+        XCTAssertFalse(isValid)
+        XCTAssertEqual(error, "Please enter your verification code")
+    }
+    
+    func testValidateCodeWhenCodeIsNotValid() {
+        let (isValid, error) = sut.validateCode("invalid_1234")
+        
+        XCTAssertFalse(isValid)
+        XCTAssertEqual(error, "Please enter a valid verification code")
+    }
+    
+    func testValidateCodeWhenCodeIsValid() {
+        let (isValid, error) = sut.validateCode("123456")
+        
+        XCTAssertTrue(isValid)
+        XCTAssertEqual(error, "")
+    }
 }

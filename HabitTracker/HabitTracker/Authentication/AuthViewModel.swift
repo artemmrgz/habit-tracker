@@ -25,24 +25,22 @@ class AuthViewModel {
     }
     
     func sendEmail(email: String) {
-//        let emailBody = EmailBody(email: email)
-//        networkService.sendEmail(emailBody: emailBody) { [weak self] result in
-//            switch result {
-//            case .success(_):
-//                self?.email = email
-//                self?.emailSent.value = true
-//            case .authError(let error):
-//                self?.error = ErrorAlert.buildForError(message: error.message)
-//            case .networkError(_):
-//                self?.error = ErrorAlert.networkError()
-//            case .serverError(let error):
-//                self?.error = ErrorAlert.buildForError(message: error.message)
-//            case .encodingError:
-//                self?.error = ErrorAlert.encodingError()
-//            }
-//        }
-        self.email = email
-        self.emailSent.value = true
+        let emailBody = EmailBody(email: email)
+        networkService.sendEmail(emailBody: emailBody) { [weak self] result in
+            switch result {
+            case .success(_):
+                self?.email = email
+                self?.emailSent.value = true
+            case .authError(let error):
+                self?.error = ErrorAlert.buildForError(message: error.message)
+            case .networkError(_):
+                self?.error = ErrorAlert.networkError()
+            case .serverError(let error):
+                self?.error = ErrorAlert.buildForError(message: error.message)
+            case .encodingError:
+                self?.error = ErrorAlert.encodingError()
+            }
+        }
     }
     
     func getTokens(code: String) {

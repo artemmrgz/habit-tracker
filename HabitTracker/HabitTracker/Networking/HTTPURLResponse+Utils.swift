@@ -9,7 +9,6 @@ import Foundation
 
 extension HTTPURLResponse {
     func isSuccessful() -> Bool {
-        print(statusCode)
         return statusCode >= 200 && statusCode <= 299
     }
 }
