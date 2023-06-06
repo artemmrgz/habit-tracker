@@ -8,27 +8,27 @@
 import UIKit
 
 class MainViewController: UITabBarController {
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupViews()
         setupTabBar()
     }
-    
+
     private func setupViews() {
         let homeVC = HomeViewController()
         let settingsVC = SettingsViewController()
-        
+
         homeVC.setTabBarImage(imageName: "house", title: "Home", tag: 0)
         settingsVC.setTabBarImage(imageName: "gearshape", title: "Settings", tag: 1)
-        
+
         let homeNC = UINavigationController(rootViewController: homeVC)
         let settingsNC = UINavigationController(rootViewController: settingsVC)
-       
+
         viewControllers = [homeNC, settingsNC]
     }
-    
+
     private func setupTabBar() {
         tabBar.tintColor = .systemRed
         tabBar.unselectedItemTintColor = .systemGray
@@ -36,5 +36,5 @@ class MainViewController: UITabBarController {
 }
 
 class SettingsViewController: UIViewController {
-    
+
 }

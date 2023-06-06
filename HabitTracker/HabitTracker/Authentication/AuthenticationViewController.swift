@@ -16,38 +16,38 @@ class AuthenticationViewController: UIViewController {
     let codeField = UITextField()
     let sendButton = UIButton()
     let backButton = UIButton()
-    
+
     let errorLabel = UILabel()
-    
+
     let stackView = UIStackView()
     let buttonsStackView = UIStackView()
-    
+
     let authVM = AuthViewModel()
-    
+
     weak var delegate: AuthenticationViewControllerDelegate?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         style()
         layout()
         setupBinders()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
         let cornerRadius = emailField.bounds.height * 0.2
-        
+
         emailField.layer.cornerRadius = cornerRadius
         codeField.layer.cornerRadius = cornerRadius
         sendButton.layer.cornerRadius = cornerRadius
         backButton.layer.cornerRadius = cornerRadius
     }
-    
+
     private func style() {
         view.backgroundColor = .systemBackground
-        
+
         emailField.translatesAutoresizingMaskIntoConstraints = false
         emailField.placeholder = "Email address"
         emailField.layer.borderWidth = 1.5
@@ -56,7 +56,6 @@ class AuthenticationViewController: UIViewController {
         emailField.autocapitalizationType = .none
         emailField.autocorrectionType = .no
         emailField.addTarget(self, action: #selector(textFieldEditingChanged), for: .editingDidBegin)
-      
 
         codeField.translatesAutoresizingMaskIntoConstraints = false
         codeField.placeholder = "Verification code"
@@ -65,32 +64,32 @@ class AuthenticationViewController: UIViewController {
         codeField.layer.borderColor = UIColor.systemGray2.cgColor
         codeField.setLeftPaddingPoints(16)
         codeField.addTarget(self, action: #selector(textFieldEditingChanged), for: .editingDidBegin)
-        
+
         errorLabel.translatesAutoresizingMaskIntoConstraints = false
         errorLabel.textColor = .systemRed
         errorLabel.isHidden = true
-        
+
         sendButton.translatesAutoresizingMaskIntoConstraints = false
         sendButton.setTitle("Send", for: .normal)
         sendButton.backgroundColor = .systemCyan
         sendButton.addTarget(self, action: #selector(sendBtnTapped), for: .touchUpInside)
         sendButton.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        
+
         backButton.translatesAutoresizingMaskIntoConstraints = false
         backButton.setTitle("Back", for: .normal)
         backButton.backgroundColor = .systemRed
         backButton.addTarget(self, action: #selector(backBtnTapped), for: .touchUpInside)
         backButton.isHidden = true
         backButton.alpha = 0
-        
+
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         stackView.spacing = 16
-        
+
         buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
         buttonsStackView.spacing = 8
     }
-    
+
     private func layout() {
         stackView.addArrangedSubview(emailField)
         stackView.addArrangedSubview(codeField)
@@ -99,20 +98,20 @@ class AuthenticationViewController: UIViewController {
         buttonsStackView.addArrangedSubview(backButton)
         stackView.addArrangedSubview(buttonsStackView)
         view.addSubview(stackView)
-        
+
         NSLayoutConstraint.activate([
-            
+
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 200),
             stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            
+
             emailField.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.06),
             codeField.heightAnchor.constraint(equalTo: emailField.heightAnchor),
             buttonsStackView.heightAnchor.constraint(equalTo: emailField.heightAnchor),
-            backButton.widthAnchor.constraint(equalTo: stackView.widthAnchor, multiplier: 0.2),
+            backButton.widthAnchor.constraint(equalTo: stackView.widthAnchor, multiplier: 0.2)
         ])
     }
-    
+
     private func setupBinders() {
         authVM.emailSent.bind { [weak self] success in
             if !success {
@@ -135,7 +134,7 @@ class AuthenticationViewController: UIViewController {
             }
         }
     }
-    
+
     private func nextTextField(_ nextField: UITextField, previousField: UITextField, show: Bool) {
         previousField.isUserInteractionEnabled = !show
         previousField.backgroundColor = show ? .systemGray4 : .white
@@ -144,7 +143,7 @@ class AuthenticationViewController: UIViewController {
         self.backButton.isHidden = !show
         self.backButton.alpha = show ? 1 : 0
     }
-    
+
     private func validate(text: String?, validator: (String?) -> (Bool, String), onSuccess: (String) -> Void) {
         let (isValid, error) = validator(text)
         if isValid {
@@ -168,7 +167,7 @@ extension AuthenticationViewController {
             validate(text: codeField.text, validator: authVM.validateCode(_:), onSuccess: authVM.getTokens(code:))
         }
     }
-    
+
     @objc func backBtnTapped() {
         UIView.animate(withDuration: 0.7, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 4) {
             self.errorLabel.isHidden = true
@@ -176,7 +175,7 @@ extension AuthenticationViewController {
             self.authVM.emailSent.value = false
         }
     }
-    
+
     @objc func textFieldEditingChanged(_ sender: UITextField) {
         UIView.animate(withDuration: 0.7, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 4) {
             self.errorLabel.isHidden = true

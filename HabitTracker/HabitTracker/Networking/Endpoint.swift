@@ -8,23 +8,22 @@
 import Foundation
 
 enum Endpoint {
-    
+
     static let baseURL = "http://127.0.0.1:8080/"
-    
+
     case auth(Auth)
-    
+
     enum Auth {
         case sendEmail
         case sendVerificationCode
         case refreshToken
     }
-    
-    
+
     func path() -> String {
         switch self {
         case.auth(let auth):
             var path = "auth/"
-            
+
             switch auth {
             case .sendEmail:
                 path += "email/"
@@ -36,7 +35,7 @@ enum Endpoint {
             return path
         }
     }
-    
+
     var absoluteURL: URL {
         return URL(string: Endpoint.baseURL + self.path())!
     }

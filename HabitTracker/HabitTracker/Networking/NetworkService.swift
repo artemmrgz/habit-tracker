@@ -12,11 +12,13 @@ protocol URLSessionDataTaskProtocol {
 }
 
 protocol URLSessionProtocol {
-    func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTaskProtocol
+    func dataTask(with request: URLRequest,
+                  completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTaskProtocol
 }
 
 extension URLSession: URLSessionProtocol {
-    func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTaskProtocol {
+    func dataTask(with request: URLRequest,
+                  completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTaskProtocol {
         return dataTask(with: request, completionHandler: completionHandler) as URLSessionDataTaskProtocol
     }
 }
@@ -28,21 +30,21 @@ protocol NetworkServiceProtocol {
     func sendVerificationCode(codeBody: VerificationCodeBody, completionHandler: @escaping (Result<TokensInfo>) -> Void)
 }
 
-
 class NetworkService: NetworkServiceProtocol {
-    
+
     private (set) static var instance: NetworkService!
-    
+
     private var tokenManager: TokenManager
     private var session: URLSessionProtocol
-    
+
     private init(tokenManager: TokenManager = TokenManager(), session: URLSessionProtocol = URLSession.shared) {
         self.tokenManager = tokenManager
         self.session = session
         NetworkService.instance = self
     }
-    
-    static func shared(tokenManager: TokenManager = TokenManager(), session: URLSessionProtocol = URLSession.shared) -> NetworkService {
+
+    static func shared(tokenManager: TokenManager = TokenManager(),
+                       session: URLSessionProtocol = URLSession.shared) -> NetworkService {
         switch instance {
         case let i?:
             i.tokenManager = tokenManager
@@ -52,9 +54,8 @@ class NetworkService: NetworkServiceProtocol {
             instance = NetworkService(tokenManager: tokenManager, session: session)
             return instance
         }
-        
     }
-    
+
     private func buildRequest(url: URL,
                               data: Data = Data(),
                               method: Method = .GET,
@@ -65,7 +66,7 @@ class NetworkService: NetworkServiceProtocol {
         request.httpMethod = method.rawValue
         request.addValue(contentType, forHTTPHeaderField: "Content-Type")
         request.httpBody = data
-        
+
         if refreshTokens {
             request.addValue("Bearer \(tokenManager.refreshToken.token)", forHTTPHeaderField: "Authorization")
         } else if !tokenManager.accessToken.token.isEmpty && !ignoreJwtAuth {
@@ -73,21 +74,21 @@ class NetworkService: NetworkServiceProtocol {
         }
         return request
     }
-    
+
     private func buildRefreshTokenRequest() -> URLRequest {
         return buildRequest(url: Endpoint.auth(.refreshToken).absoluteURL, method: .POST, refreshTokens: true)
     }
-    
+
     private var needReAuth: Bool {
         return !tokenManager.isValidToken(tokenManager.accessToken)
     }
-    
+
     private func renewAuthHeader(request: URLRequest) -> URLRequest {
         var newRequest = request
         newRequest.setValue("Bearer \(tokenManager.accessToken.token)", forHTTPHeaderField: "Authorization")
         return newRequest
     }
-    
+
     func request<T: Decodable>(request: URLRequest, completionHandler: @escaping (Result<T>) -> Void) {
         if needReAuth && !tokenManager.refreshToken.token.isEmpty {
             authAndDoRequest(request: request, completionHandler: completionHandler)
@@ -95,7 +96,7 @@ class NetworkService: NetworkServiceProtocol {
             doRequest(request: request, completionHandler: completionHandler)
         }
     }
-    
+
     func authAndDoRequest<T: Decodable>(request: URLRequest, completionHandler: @escaping (Result<T>) -> Void) {
         let refreshToken = buildRefreshTokenRequest()
         session.dataTask(with: refreshToken) { data, response, error in
@@ -105,21 +106,22 @@ class NetworkService: NetworkServiceProtocol {
                 }
                 return
             }
-            
+
             guard let httpResponse = response as? HTTPURLResponse else {
                 DispatchQueue.main.async {
                     completionHandler(.authError(ErrorResponse(code: 0, message: Errors.errorConvertingToHttpResponse)))
                 }
                 return
             }
-            
+
             guard let data = data else {
                 DispatchQueue.main.async {
-                    completionHandler(.authError(ErrorResponse(code: httpResponse.statusCode, message: Errors.errorNilBody)))
+                    completionHandler(.authError(ErrorResponse(code: httpResponse.statusCode,
+                                                               message: Errors.errorNilBody)))
                 }
                 return
             }
-            
+
             if httpResponse.isSuccessful() {
                 do {
                     let response = try JSONDecoder().decode(TokensInfo.self, from: data)
@@ -133,7 +135,7 @@ class NetworkService: NetworkServiceProtocol {
                     }
                     return
                 }
-                    
+
             } else {
                 do {
                     let errorResponse = try JSONDecoder().decode(ErrorResponse.self, from: data)
@@ -150,7 +152,7 @@ class NetworkService: NetworkServiceProtocol {
             }
         }.resume()
     }
-    
+
     func doRequest<T: Decodable>(request: URLRequest, completionHandler: @escaping (Result<T>) -> Void) {
         session.dataTask(with: request) { data, response, error in
             if let error = error {
@@ -159,21 +161,22 @@ class NetworkService: NetworkServiceProtocol {
                 }
                 return
             }
-            
+
             guard let httpResponse = response as? HTTPURLResponse else {
                 DispatchQueue.main.async {
                     completionHandler(.networkError(Errors.errorConvertingToHttpResponse))
                 }
                 return
             }
-            
+
             guard let data = data else {
                 DispatchQueue.main.async {
-                    completionHandler(.serverError(ErrorResponse(code: httpResponse.statusCode, message: Errors.errorNilBody)))
+                    completionHandler(.serverError(ErrorResponse(code: httpResponse.statusCode,
+                                                                 message: Errors.errorNilBody)))
                 }
                 return
             }
-            
+
             if httpResponse.isSuccessful() {
                 let responseBody: Result<T> = self.parseResponse(data: data)
                 DispatchQueue.main.async {
@@ -187,7 +190,7 @@ class NetworkService: NetworkServiceProtocol {
             }
         }.resume()
     }
-    
+
     private func parseResponse<T: Decodable>(data: Data) -> Result<T> {
         do {
             return try .success(JSONDecoder().decode(T.self, from: data))
@@ -195,7 +198,7 @@ class NetworkService: NetworkServiceProtocol {
             return parseError(data: data)
         }
     }
-    
+
     private func parseError<T>(data: Data) -> Result<T> {
         do {
             let errorResponse = try JSONDecoder().decode(ErrorResponse.self, from: data)
@@ -208,7 +211,7 @@ class NetworkService: NetworkServiceProtocol {
             return .serverError(ErrorResponse(code: 0, message: Errors.errorParsingErrorResponse))
         }
     }
-    
+
     func sendEmail(emailBody: EmailBody, completionHandler: @escaping (Result<SuccessResponse>) -> Void) {
         let url = Endpoint.auth(.sendEmail).absoluteURL
         do {
@@ -219,8 +222,9 @@ class NetworkService: NetworkServiceProtocol {
             completionHandler(.encodingError)
         }
     }
-    
-    func sendVerificationCode(codeBody: VerificationCodeBody, completionHandler: @escaping (Result<TokensInfo>) -> Void) {
+
+    func sendVerificationCode(codeBody: VerificationCodeBody,
+                              completionHandler: @escaping (Result<TokensInfo>) -> Void) {
         let url = Endpoint.auth(.sendVerificationCode).absoluteURL
         do {
             let body = try JSONEncoder().encode(codeBody)
@@ -240,13 +244,16 @@ extension NetworkService {
                                 contentType: String = "application/json",
                                 refreshTokens: Bool = false,
                                 ignoreJwtAuth: Bool = false) -> URLRequest {
-        return buildRequest(url: url, data: data, method: method, refreshTokens: refreshTokens, ignoreJwtAuth: ignoreJwtAuth)
+        return buildRequest(url: url, data: data,
+                            method: method,
+                            refreshTokens: refreshTokens,
+                            ignoreJwtAuth: ignoreJwtAuth)
     }
-    
+
     func buildRefreshTokenRequestForTesting() -> URLRequest {
         return buildRefreshTokenRequest()
     }
-    
+
     func renewAuthHeaderForTesting(request: URLRequest) -> URLRequest {
         return renewAuthHeader(request: request)
     }

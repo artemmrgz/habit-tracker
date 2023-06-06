@@ -10,23 +10,22 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    
+
     let mainVC = MainViewController()
     let authVC = AuthenticationViewController()
 
+    func scene(_ scene: UIScene,
+               willConnectTo session: UISceneSession,
+               options connectionOptions: UIScene.ConnectionOptions) {
 
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        
+
         window = UIWindow(windowScene: windowScene)
         authVC.delegate = self
-        
+
         showStartScreen()
     }
-    
+
     private func showStartScreen() {
         guard let tokenManager = authVC.authVM.tokenManager else { return }
         if tokenManager.isValidToken(tokenManager.refreshToken) {
@@ -35,14 +34,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             setRootViewController(authVC)
         }
     }
-    
+
     private func setRootViewController(_ vc: UIViewController, animated: Bool = true) {
         guard animated, let window = self.window else {
             self.window?.rootViewController = vc
             self.window?.makeKeyAndVisible()
             return
         }
-        
+
         window.rootViewController = vc
         window.makeKeyAndVisible()
         UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil)
@@ -52,7 +51,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.
         // Release any resources associated with this scene that can be re-created the next time the scene connects.
-        // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
+        // The scene may re-connect later, as its session was not necessarily discarded
+        // (see `application:didDiscardSceneSessions` instead).
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
@@ -82,4 +82,3 @@ extension SceneDelegate: AuthenticationViewControllerDelegate {
         setRootViewController(mainVC)
     }
 }
-

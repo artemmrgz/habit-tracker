@@ -8,22 +8,23 @@
 import UIKit
 
 class AuthViewModel {
-    
+
     private (set) var networkService: NetworkServiceProtocol!
     private (set) var tokenManager: TokenManageable!
-    
+
     private (set) var error: UIAlertController?
-    
+
     let emailSent: ObservableObject<Bool> = ObservableObject(false)
     let tokensReceived: ObservableObject<Bool> = ObservableObject(false)
-    
+
     private var email: String?
-    
-    init(networkService: NetworkServiceProtocol = NetworkService.shared(), tokenManager: TokenManageable = TokenManager()) {
+
+    init(networkService: NetworkServiceProtocol = NetworkService.shared(),
+         tokenManager: TokenManageable = TokenManager()) {
         self.networkService = networkService
         self.tokenManager = tokenManager
     }
-    
+
     func sendEmail(email: String) {
         let emailBody = EmailBody(email: email)
         networkService.sendEmail(emailBody: emailBody) { [weak self] result in
@@ -42,7 +43,7 @@ class AuthViewModel {
             }
         }
     }
-    
+
     func getTokens(code: String) {
         guard let email else { return }
         let codeBody = VerificationCodeBody(email: email, code: code)
@@ -62,23 +63,23 @@ class AuthViewModel {
             }
         }
     }
-    
+
     func validateEmail(_ text: String?) -> (Bool, String) {
         guard let text = text, !text.isEmpty else {
             return (false, "Please enter your email address")
         }
-        
+
         if !text.isValidEmail {
             return (false, "Please enter a valid email address")
         }
         return (true, "")
     }
-    
+
     func validateCode(_ text: String?) -> (Bool, String) {
         guard let text = text, !text.isEmpty else {
             return (false, "Please enter your verification code")
         }
-        
+
         if Int(text) == nil, text.count != 6 {
             return (false, "Please enter a valid verification code")
         }
