@@ -9,6 +9,10 @@ import UIKit
 
 class CalendarViewModel {
 
+    let networkService = NetworkService.shared()
+
+    var habits = [Habit]()
+
     enum DayOfWeekFormat: String {
         case EEE
         case EEEE
@@ -26,8 +30,8 @@ class CalendarViewModel {
     }
 
     let dateToday = Date()
-    var lastDayInSevenDays: Date!
-    var sevenDays: [Day]!
+    var days: [Day]!
+    
     private var dayOfMonthFormat: DayOfMonthFormat
     private var dayOfWeekFormat: DayOfWeekFormat
 
@@ -35,19 +39,17 @@ class CalendarViewModel {
         self.dayOfMonthFormat = dayOfMonthFormat
         self.dayOfWeekFormat = dayOfWeekFormat
 
-        getSevenDays(endDate: dateToday)
+        getDays(endDate: dateToday)
     }
 
-    private func getSevenDays(endDate: Date) {
-        var days = [Day]()
+    func getDays(endDate: Date) {
+        var innerDays = [Day]()
 
-        lastDayInSevenDays = endDate
-
-        for index in -6...0 {
-            days.append(getDate(index: index, currentDate: lastDayInSevenDays))
+        for index in -31...0 {
+            innerDays.append(getDate(index: index, currentDate: dateToday))
         }
 
-        sevenDays = days
+        days = innerDays
     }
 
     private func getDate(index: Int, currentDate: Date) -> Day {
@@ -65,20 +67,15 @@ class CalendarViewModel {
                    dayAsDate: date)
     }
 
-    func getPreviousSevenDays() {
-        let dateWeekAgo = Calendar.current.date(byAdding: .day, value: -7, to: lastDayInSevenDays)!
-
-        getSevenDays(endDate: dateWeekAgo)
-    }
-
-    func getNextSevenDays() -> Bool {
-        let dateNextWeek = Calendar.current.date(byAdding: .day, value: 7, to: lastDayInSevenDays)!
-
-        let nextWeekAvailable = dateNextWeek <= dateToday
-
-        if nextWeekAvailable {
-            getSevenDays(endDate: dateNextWeek)
+    func getHabits() {
+        networkService.getHabits(forDate: Date()) { res in
+            switch res {
+            case .success(let habits):
+                print(habits)
+                self.habits = habits.data
+            default:
+                print("error")
+            }
         }
-        return nextWeekAvailable
     }
 }

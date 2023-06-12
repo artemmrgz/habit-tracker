@@ -9,7 +9,15 @@ import UIKit
 
 class HomeViewController: UIViewController {
 
-    let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.showsHorizontalScrollIndicator = false
+        return collectionView
+    }()
+
     let dayOverviewView = DayOverviewView()
 
     let calendarViewModel = CalendarViewModel()
@@ -23,14 +31,20 @@ class HomeViewController: UIViewController {
         view.backgroundColor = .systemBackground
 
         layout()
-        performGesture()
+
+        title = "Home"
+        navigationController?.navigationBar.prefersLargeTitles = true
+
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        let indexPath = IndexPath(row: calendarViewModel.days.count - 1, section: 0)
+        collectionView.scrollToItem(at: indexPath, at: .right, animated: true)
     }
 
     func layout() {
-        nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        nameLabel.text = "Hello"
-        nameLabel.font = .systemFont(ofSize: 30)
-
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = .systemBackground
 
@@ -40,15 +54,10 @@ class HomeViewController: UIViewController {
         dayOverviewView.alpha = 0
 
         view.addSubview(collectionView)
-        view.addSubview(nameLabel)
         view.addSubview(dayOverviewView)
 
         NSLayoutConstraint.activate([
-            nameLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            nameLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
-            nameLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8),
-
-            collectionView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 16),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8),
             collectionView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1),
@@ -57,40 +66,6 @@ class HomeViewController: UIViewController {
             dayOverviewView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             dayOverviewView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8)
         ])
-    }
-
-    private func performGesture() {
-        let leftGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe))
-        let rightGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe))
-
-        leftGesture.direction = .left
-        rightGesture.direction = .right
-
-        collectionView.addGestureRecognizer(leftGesture)
-        collectionView.addGestureRecognizer(rightGesture)
-    }
-
-    @objc func handleSwipe(_ sender: UISwipeGestureRecognizer) {
-        if sender.direction == .right {
-            calendarViewModel.getPreviousSevenDays()
-            collectionView.layer.add(swipeTransition(isRight: true), forKey: nil)
-            collectionView.reloadData()
-        }
-        if sender.direction == .left {
-            if calendarViewModel.getNextSevenDays() {
-                collectionView.layer.add(swipeTransition(isRight: false), forKey: nil)
-                collectionView.reloadData()
-            }
-        }
-    }
-
-    private func swipeTransition(isRight: Bool) -> CATransition {
-        let transition = CATransition()
-        transition.type = .push
-        transition.duration = 0.4
-        transition.subtype = isRight ? .fromLeft : .fromRight
-
-        return transition
     }
 
     private func getCellFrame(from collectionView: UICollectionView, at indexPath: IndexPath) -> CGRect? {
@@ -107,17 +82,17 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 7
+        return calendarViewModel.days.count
     }
 
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard !calendarViewModel.sevenDays.isEmpty,
+        guard !calendarViewModel.days.isEmpty,
               let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CalendarCell.reuseID,
                                                             for: indexPath) as? CalendarCell else {
             return UICollectionViewCell() }
 
-        let day = calendarViewModel.sevenDays[indexPath.row]
+        let day = calendarViewModel.days[indexPath.row]
 
         cell.configureWith(dayOfMonth: day.dayOfMonth,
                            dayOfWeek: day.dayOfWeek,
@@ -126,10 +101,10 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard !calendarViewModel.sevenDays.isEmpty else { return }
+        guard !calendarViewModel.days.isEmpty else { return }
         guard let cellFrame = getCellFrame(from: collectionView, at: indexPath) else { return }
 
-        let day = calendarViewModel.sevenDays[indexPath.row]
+        let day = calendarViewModel.days[indexPath.row]
 
         let formatter = DateFormatter()
         formatter.dateFormat = "dd.MM.yyyy"
@@ -159,12 +134,6 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.bounds.width / 7 - 5
         return CGSize(width: width, height: collectionView.bounds.size.height)
-    }
-
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 5
     }
 
     func collectionView(_ collectionView: UICollectionView,
