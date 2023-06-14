@@ -66,16 +66,4 @@ class CalendarViewModel {
                    dayOfWeek: dayOfWeek.string(from: date),
                    dayAsDate: date)
     }
-
-//    func getHabits() {
-//        networkService.getHabits(forDate: Date()) { res in
-//            switch res {
-//            case .success(let habits):
-//                print(habits)
-//                self.habits = habits.data
-//            default:
-//                print("error")
-//            }
-//        }
-//    }
 }

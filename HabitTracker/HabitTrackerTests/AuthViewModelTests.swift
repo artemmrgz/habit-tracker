@@ -22,24 +22,24 @@ final class AuthViewModelTests: XCTestCase {
         var isSendVerificationCodeCalled = false
         var shouldReturnError = false
 
-        func sendEmail(emailBody: EmailBody, completionHandler: @escaping (Result<SuccessResponse>) -> Void) {
+        func sendEmail(emailBody: EmailBody, completion: @escaping (Result<SuccessResponse>) -> Void) {
             isSendEmailCalled = true
 
             if shouldReturnError {
-                completionHandler(Result.authError(ErrorResponse(code: 402, message: errorMessage)))
+                completion(Result.authError(ErrorResponse(code: 402, message: errorMessage)))
             } else {
-                completionHandler(Result.success(SuccessResponse()))
+                completion(Result.success(SuccessResponse()))
             }
         }
 
         func sendVerificationCode(codeBody: HabitTracker.VerificationCodeBody,
-                                  completionHandler: @escaping (Result<TokensInfo>) -> Void) {
+                                  completion: @escaping (Result<TokensInfo>) -> Void) {
             isSendVerificationCodeCalled = true
 
             if shouldReturnError {
-                completionHandler(Result.authError(ErrorResponse(code: 402, message: errorMessage)))
+                completion(Result.authError(ErrorResponse(code: 402, message: errorMessage)))
             } else {
-                completionHandler(Result.success(tokens))
+                completion(Result.success(tokens))
             }
         }
     }
