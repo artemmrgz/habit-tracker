@@ -9,9 +9,10 @@ import Foundation
 
 enum Endpoint {
 
-    static let baseURL = "http://127.0.0.1:8080/"
+    static let baseURL = "http://127.0.0.1:8000/api/"
 
     case auth(Auth)
+    case me(Resource)
 
     enum Auth {
         case sendEmail
@@ -19,18 +20,31 @@ enum Endpoint {
         case refreshToken
     }
 
+    enum Resource {
+        case habits
+    }
+
     func path() -> String {
         switch self {
-        case.auth(let auth):
+        case .auth(let action):
             var path = "auth/"
 
-            switch auth {
+            switch action {
             case .sendEmail:
                 path += "email/"
             case .sendVerificationCode:
                 path += "token/"
             case .refreshToken:
                 path += "token/refresh/"
+            }
+            return path
+
+        case .me(let resource):
+            var path = "me/"
+
+            switch resource {
+            case .habits:
+                path += "habits/"
             }
             return path
         }

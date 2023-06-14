@@ -31,7 +31,7 @@ class CalendarViewModel {
 
     let dateToday = Date()
     var days: [Day]!
-    
+
     private var dayOfMonthFormat: DayOfMonthFormat
     private var dayOfWeekFormat: DayOfWeekFormat
 
@@ -39,13 +39,13 @@ class CalendarViewModel {
         self.dayOfMonthFormat = dayOfMonthFormat
         self.dayOfWeekFormat = dayOfWeekFormat
 
-        getDays(endDate: dateToday)
+        getDays(amount: 30)
     }
 
-    func getDays(endDate: Date) {
+    func getDays(amount: Int) {
         var innerDays = [Day]()
 
-        for index in -31...0 {
+        for index in -amount...0 {
             innerDays.append(getDate(index: index, currentDate: dateToday))
         }
 
@@ -67,15 +67,15 @@ class CalendarViewModel {
                    dayAsDate: date)
     }
 
-    func getHabits() {
-        networkService.getHabits(forDate: Date()) { res in
-            switch res {
-            case .success(let habits):
-                print(habits)
-                self.habits = habits.data
-            default:
-                print("error")
-            }
-        }
-    }
+//    func getHabits() {
+//        networkService.getHabits(forDate: Date()) { res in
+//            switch res {
+//            case .success(let habits):
+//                print(habits)
+//                self.habits = habits.data
+//            default:
+//                print("error")
+//            }
+//        }
+//    }
 }
