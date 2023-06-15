@@ -58,13 +58,8 @@ class CalendarCell: UICollectionViewCell {
         ])
     }
 
-    func configureWith(dayOfMonth: String, dayOfWeek: String, isToday: Bool) {
+    func configureWith(dayOfMonth: String, dayOfWeek: String) {
         self.dayOfMonthLabel.text = dayOfMonth
         self.dayOfWeekLabel.text = dayOfWeek
-        if isToday {
-            contentView.backgroundColor = .systemPurple
-        } else {
-            contentView.backgroundColor = .systemGray
-        }
     }
 }

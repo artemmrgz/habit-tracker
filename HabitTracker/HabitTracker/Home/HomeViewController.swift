@@ -25,6 +25,9 @@ class HomeViewController: UIViewController {
     let calendarVM = CalendarViewModel()
     let habitsVM = HabitsViewModel()
 
+    var currentSelectedIndex = IndexPath(row: 0, section: 0)
+    var previousSelectedIndex = IndexPath(row: 0, section: 0)
+
     override func viewDidLoad() {
         title = "Home"
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -35,6 +38,9 @@ class HomeViewController: UIViewController {
         setupButton()
         setupSpinner()
         setupBinders()
+
+        currentSelectedIndex = IndexPath(row: calendarVM.days.count - 1, section: 0)
+        collectionView.delegate?.collectionView?(collectionView, didSelectItemAt: currentSelectedIndex)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -150,15 +156,22 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
 
         let day = calendarVM.days[indexPath.row]
 
-        cell.configureWith(dayOfMonth: day.dayOfMonth,
-                           dayOfWeek: day.dayOfWeek,
-                           isToday: calendarVM.dateToday == day.dayAsDate)
+        cell.configureWith(dayOfMonth: day.dayOfMonth, dayOfWeek: day.dayOfWeek)
+
+        if currentSelectedIndex == indexPath {
+            cell.contentView.backgroundColor = .systemPurple
+        }
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard !calendarVM.days.isEmpty else { return }
         let day = calendarVM.days[indexPath.row]
+
+        previousSelectedIndex = currentSelectedIndex
+        currentSelectedIndex = indexPath
+        collectionView.reloadItems(at: [currentSelectedIndex])
+        collectionView.reloadItems(at: [previousSelectedIndex])
 
         resetTableView()
 
